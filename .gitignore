@@ -21,3 +21,4 @@ __pycache__/
 
 output.csv
 _doctools/*.csv
+.claude/
