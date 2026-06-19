@@ -5,18 +5,192 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produits — SIPANO | Bois, Panneaux &amp; Quincaillerie</title>
   <meta name="description" content="Découvrez toute la gamme de produits SIPANO : MDF, mélaminé, contreplaqué, OSB, charnières, poignées, scies et accessoires professionnels.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── PRODUCT CARDS v2 ─────────────────────────────── */
+    .product-card__image {
+      height: 200px;
+      overflow: hidden;
+      background: #f0ebe4;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-card__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform .5s ease;
+      display: block;
+    }
+    .product-card:hover .product-card__image img { transform: scale(1.05); }
+    .product-card__badge {
+      position: absolute;
+      top: 10px; left: 10px;
+      background: var(--gold);
+      color: var(--brown);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .25rem .65rem;
+      border-radius: 20px;
+      z-index: 2;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .product-card__category {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .3rem;
+    }
+    .product-card__title { font-size: 1rem; color: var(--brown); margin-bottom: .4rem; }
+    .product-card__desc  { font-size: .83rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
+    .product-card__footer { display: flex; justify-content: space-between; align-items: center; }
+    .product-card__price { font-weight: 700; color: var(--brown); font-size: .9rem; }
+    .product-card__price small { font-weight: 400; font-size: .75rem; color: var(--text-muted); display: block; }
+    .btn-sm { padding: .45rem 1rem; font-size: .82rem; }
+    .product-card.hidden { display: none; }
+
+    /* ── MODAL ────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,10,5,.65);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      max-width: 860px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(30px) scale(.97);
+      transition: transform .3s ease;
+      position: relative;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--light);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 10;
+      transition: background .2s;
+    }
+    .modal-close:hover { background: var(--gray); }
+
+    .modal-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 640px) { .modal-hero { grid-template-columns: 1fr; } }
+
+    .modal-img {
+      height: 320px;
+      overflow: hidden;
+      border-radius: 16px 0 0 0;
+      background: #f0ebe4;
+    }
+    @media (max-width: 640px) {
+      .modal-img { height: 220px; border-radius: 16px 16px 0 0; }
+    }
+    .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .modal-header {
+      padding: 2rem 1.75rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 0 16px 0 0;
+      background: var(--light);
+    }
+    .modal-header .cat { font-size: .75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .5rem; }
+    .modal-header h2  { font-size: 1.6rem; color: var(--brown); margin-bottom: .5rem; }
+    .modal-header .ref { font-size: .8rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .modal-price { font-size: 1.4rem; font-weight: 800; color: var(--brown); }
+    .modal-price small { font-size: .8rem; font-weight: 400; color: var(--text-muted); }
+    .modal-price-note { font-size: .78rem; color: var(--text-muted); margin-top: .2rem; }
+
+    .modal-body { padding: 1.75rem; }
+
+    .modal-body h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--brown);
+      margin: 1.5rem 0 .75rem;
+      padding-bottom: .4rem;
+      border-bottom: 2px solid var(--gold);
+      display: inline-block;
+    }
+    .modal-body h3:first-child { margin-top: 0; }
+    .modal-body p { font-size: .9rem; line-height: 1.7; color: var(--text-muted); }
+
+    .specs-table { width: 100%; border-collapse: collapse; margin-top: .5rem; }
+    .specs-table tr:nth-child(even) td { background: var(--light); }
+    .specs-table td {
+      padding: .6rem .8rem;
+      font-size: .86rem;
+      border-bottom: 1px solid var(--gray);
+    }
+    .specs-table td:first-child { font-weight: 600; color: var(--brown); width: 42%; }
+
+    .formats-list { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .format-chip {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      border-radius: 6px;
+      padding: .35rem .8rem;
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--brown);
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.75rem;
+      background: var(--light);
+      border-top: 1px solid var(--gray);
+      border-radius: 0 0 16px 16px;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .modal-footer a { flex: 1; min-width: 160px; text-align: center; }
+  </style>
 </head>
 <body>
 
-<!-- ============================================================
-     HEADER
-     ============================================================ -->
+<!-- HEADER -->
 <header class="site-header" role="banner">
   <div class="container">
     <div class="header-inner">
       <a href="index.html" class="logo" aria-label="SIPANO — Accueil">
-        <svg class="logo__icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="logo__icon" viewBox="0 0 36 36" fill="none" aria-hidden="true">
           <circle cx="18" cy="18" r="13" stroke="#C9A531" stroke-width="2"/>
           <rect x="10" y="10" width="16" height="16" rx="3" stroke="#C9A531" stroke-width="1.5"/>
           <polygon points="15,14 15,22 23,18" fill="#E04A2E"/>
@@ -44,7 +218,6 @@
     </div>
   </div>
 </header>
-
 <nav class="mobile-nav" aria-label="Navigation mobile">
   <a href="index.html">Accueil</a>
   <a href="produits.html" class="active">Produits</a>
@@ -53,9 +226,7 @@
   <a href="contact.html" class="btn btn-gold">Demander un Devis</a>
 </nav>
 
-<!-- ============================================================
-     PAGE HERO
-     ============================================================ -->
+<!-- HERO -->
 <section class="page-hero" aria-label="Tous nos Produits">
   <div class="container">
     <span class="section-label">Notre Catalogue</span>
@@ -64,469 +235,758 @@
   </div>
 </section>
 
-<!-- ============================================================
-     PRODUITS AVEC FILTRES
-     ============================================================ -->
+<!-- PRODUITS -->
 <section class="section" id="catalogue">
   <div class="container">
 
-    <!-- Filter tabs -->
     <div class="filter-tabs" role="tablist" aria-label="Filtrer les produits">
-      <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">Tous les Produits</button>
-      <button class="filter-tab" data-filter="bois" role="tab" aria-selected="false">Bois &amp; Panneaux</button>
-      <button class="filter-tab" data-filter="quincaillerie" role="tab" aria-selected="false">Quincaillerie</button>
-      <button class="filter-tab" data-filter="outils" role="tab" aria-selected="false">Outils &amp; Équipement</button>
+      <button class="filter-tab active" data-filter="all"          role="tab" aria-selected="true" >Tous les Produits</button>
+      <button class="filter-tab"        data-filter="bois"         role="tab" aria-selected="false">Bois &amp; Panneaux</button>
+      <button class="filter-tab"        data-filter="quincaillerie" role="tab" aria-selected="false">Quincaillerie</button>
+      <button class="filter-tab"        data-filter="outils"       role="tab" aria-selected="false">Outils &amp; Équipement</button>
     </div>
 
-    <!-- Products Grid -->
     <div class="products-grid" id="products-grid">
 
-      <!-- ---- BOIS & PANNEAUX ---- -->
+      <!-- ══════════════ BOIS & PANNEAUX ══════════════ -->
 
       <!-- MDF 19mm -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="mdf-19">
         <div class="product-card__image">
           <span class="product-card__badge">Populaire</span>
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="8" y="20" width="48" height="7" rx="2" fill="#C9A531" opacity=".9"/>
-            <rect x="8" y="29" width="48" height="6" rx="2" fill="#C9A531" opacity=".6"/>
-            <rect x="8" y="37" width="48" height="6" rx="2" fill="#C9A531" opacity=".35"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1601758174493-45d0a4d3e407?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Panneau MDF 19mm" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#d4b896,#c09060)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
-          <h3 class="product-card__title">MDF 19mm</h3>
-          <p class="product-card__desc">Panneau de fibres à densité moyenne. Surface lisse, idéal pour meubles et aménagements intérieurs. Disponible en format standard et sur mesure.</p>
+          <h3 class="product-card__title">MDF 19 mm</h3>
+          <p class="product-card__desc">Panneau de fibres à densité moyenne, surface lisse 2 faces. Idéal pour meubles et aménagements intérieurs.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 28 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('mdf-19')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- MDF Hydro -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="mdf-hydro">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="8" y="20" width="48" height="7" rx="2" fill="#4a9eda" opacity=".8"/>
-            <rect x="8" y="29" width="48" height="6" rx="2" fill="#4a9eda" opacity=".5"/>
-            <rect x="8" y="37" width="48" height="6" rx="2" fill="#4a9eda" opacity=".3"/>
-            <path d="M32 12 Q36 6 32 2 Q28 6 32 12Z" fill="#4a9eda" opacity=".9"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Panneau MDF Hydro" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#4a8a6a,#2a6a4a)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
           <h3 class="product-card__title">MDF Hydro</h3>
-          <p class="product-card__desc">MDF résistant à l'humidité, traité pour salles de bains, cuisines et espaces humides. Coloris vert caractéristique.</p>
+          <p class="product-card__desc">MDF résistant à l'humidité (classe 2), traité pour cuisines, salles de bains et espaces humides. Coloris vert caractéristique.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 38 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('mdf-hydro')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Mélaminé Blanc -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="melamine-blanc">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="8" y="18" width="48" height="28" rx="3" fill="white" stroke="#C9A531" stroke-width="2"/>
-            <rect x="8" y="18" width="48" height="4" rx="2" fill="#C9A531" opacity=".4"/>
-            <rect x="8" y="42" width="48" height="4" rx="2" fill="#C9A531" opacity=".4"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Mélaminé Blanc" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#e8e0d8,#d8d0c8)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
           <h3 class="product-card__title">Mélaminé Blanc</h3>
           <p class="product-card__desc">Panneau de particules recouvert de mélaminé blanc. Finition lisse, facilement nettoyable. Parfait pour étagères et meubles de cuisine.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 22 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('melamine-blanc')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Mélaminé Décor -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="melamine-decor">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Wood grain effect -->
-            <rect x="8" y="18" width="48" height="28" rx="3" fill="#8B6340" opacity=".9"/>
-            <path d="M8 24 Q20 22 32 25 Q44 28 56 24" stroke="#6B4A28" stroke-width="1.5" fill="none"/>
-            <path d="M8 30 Q22 28 36 32 Q48 35 56 30" stroke="#6B4A28" stroke-width="1.5" fill="none"/>
-            <path d="M8 36 Q18 34 30 37 Q42 40 56 37" stroke="#6B4A28" stroke-width="1.5" fill="none"/>
-            <rect x="8" y="18" width="48" height="4" rx="2" fill="#C9A531" opacity=".3"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Mélaminé Décor" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#8a6a40,#6a4a20)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
           <h3 class="product-card__title">Mélaminé Décor</h3>
-          <p class="product-card__desc">Mélaminé à décor bois, béton ou uni. Large gamme de teintes et textures pour personnaliser vos aménagements.</p>
+          <p class="product-card__desc">Décors bois, béton, marbre ou uni. Large choix de teintes et textures pour des réalisations design et personnalisées.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 26 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('melamine-decor')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Contreplaqué -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="contreplaque">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="8" y="16" width="48" height="5" rx="1" fill="#C9A531" opacity=".9"/>
-            <rect x="8" y="23" width="48" height="5" rx="1" fill="#a07828" opacity=".8"/>
-            <rect x="8" y="30" width="48" height="5" rx="1" fill="#C9A531" opacity=".7"/>
-            <rect x="8" y="37" width="48" height="5" rx="1" fill="#a07828" opacity=".6"/>
-            <rect x="8" y="44" width="48" height="4" rx="1" fill="#C9A531" opacity=".5"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Contreplaqué" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#b8903a,#8a6820)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
           <h3 class="product-card__title">Contreplaqué</h3>
-          <p class="product-card__desc">Panneau multiplis haute résistance. Idéal pour construction, agencement et mobilier robuste. Disponible en plusieurs épaisseurs.</p>
+          <p class="product-card__desc">Structure multiplis renforcée pour applications exigeantes. Excellente résistance mécanique et à la flexion.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 32 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('contreplaque')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Egger -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="egger">
         <div class="product-card__image">
           <span class="product-card__badge">Premium</span>
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="8" y="18" width="48" height="28" rx="3" fill="#C9A531" opacity=".2" stroke="#C9A531" stroke-width="2"/>
-            <text x="32" y="37" text-anchor="middle" fill="#C9A531" font-size="14" font-weight="bold" font-family="Arial">EGGER</text>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Panneau Egger" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#2C1A0E,#6B4226)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
           <h3 class="product-card__title">Egger</h3>
-          <p class="product-card__desc">Panneaux de marque Egger, référence européenne. Qualité premium pour professionnels exigeants. Large palette de décors disponible.</p>
+          <p class="product-card__desc">Panneaux Egger de qualité premium, certifiés PEFC. Gamme étendue de décors et de formats. Résistance et durabilité supérieures.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 34 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('egger')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- OSB -->
-      <article class="product-card fade-in-up" data-category="bois">
+      <article class="product-card fade-in-up" data-category="bois"
+               data-modal="osb">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- OSB texture: oriented strands -->
-            <rect x="8" y="16" width="48" height="32" rx="3" fill="#8B6340" opacity=".7"/>
-            <line x1="12" y1="20" x2="26" y2="24" stroke="#6B4A28" stroke-width="2"/>
-            <line x1="20" y1="16" x2="34" y2="22" stroke="#6B4A28" stroke-width="2"/>
-            <line x1="30" y1="18" x2="44" y2="26" stroke="#6B4A28" stroke-width="2"/>
-            <line x1="40" y1="20" x2="56" y2="28" stroke="#6B4A28" stroke-width="2"/>
-            <line x1="8" y1="28" x2="22" y2="32" stroke="#C9A531" stroke-width="1.5" opacity=".5"/>
-            <line x1="18" y1="30" x2="32" y2="36" stroke="#C9A531" stroke-width="1.5" opacity=".5"/>
-            <line x1="32" y1="26" x2="46" y2="34" stroke="#C9A531" stroke-width="1.5" opacity=".5"/>
-            <line x1="12" y1="36" x2="28" y2="44" stroke="#6B4A28" stroke-width="2"/>
-            <line x1="26" y1="34" x2="40" y2="42" stroke="#6B4A28" stroke-width="2"/>
-            <line x1="40" y1="36" x2="56" y2="44" stroke="#6B4A28" stroke-width="2"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1587174486073-ae5a5cff23aa?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Panneau OSB" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#c89a4a,#a87a2a)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Bois &amp; Panneaux</p>
-          <h3 class="product-card__title">OSB</h3>
-          <p class="product-card__desc">Panneau de lamelles orientées. Très résistant pour construction, ossature bois et sous-toiture. Excellent rapport résistance/prix.</p>
+          <h3 class="product-card__title">OSB 3</h3>
+          <p class="product-card__desc">Panneau de lamelles orientées pour la construction. Résistant à l'humidité, idéal pour ossature bois, toiture et plancher.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 18 €<small>/m²</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('osb')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
-      <!-- ---- QUINCAILLERIE ---- -->
+      <!-- ══════════════ QUINCAILLERIE ══════════════ -->
 
       <!-- Charnières -->
-      <article class="product-card fade-in-up" data-category="quincaillerie">
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="charnieres">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <circle cx="22" cy="32" r="10" stroke="#C9A531" stroke-width="2.5" fill="none"/>
-            <circle cx="42" cy="32" r="10" stroke="#C9A531" stroke-width="2.5" fill="none"/>
-            <circle cx="22" cy="32" r="4" fill="#C9A531"/>
-            <circle cx="42" cy="32" r="4" fill="#C9A531"/>
-            <line x1="22" y1="32" x2="42" y2="32" stroke="#C9A531" stroke-width="2"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Charnières professionnelles" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#888,#555)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Quincaillerie</p>
           <h3 class="product-card__title">Charnières Professionnelles</h3>
-          <p class="product-card__desc">Charnières de haute qualité pour portes et meubles. Disponibles en acier inoxydable, nickel ou laiton. Réglage 3D.</p>
+          <p class="product-card__desc">Large gamme de charnières invisibles, réglables 3 axes. Ouvertures 95°, 110°, 170°. Marques Blum, Hettich, Häfele.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 1,20 €<small>/pièce</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('charnieres')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
-      <!-- Poignées -->
-      <article class="product-card fade-in-up" data-category="quincaillerie">
+      <!-- Poignées & Boutons -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="poignees">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Door handle -->
-            <rect x="20" y="28" width="24" height="8" rx="4" stroke="#C9A531" stroke-width="2.5" fill="none"/>
-            <circle cx="18" cy="32" r="3" fill="#C9A531"/>
-            <circle cx="46" cy="32" r="3" fill="#C9A531"/>
-            <!-- Knob below -->
-            <circle cx="32" cy="44" r="5" stroke="#C9A531" stroke-width="2" fill="none"/>
-            <circle cx="32" cy="44" r="2" fill="#C9A531"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Poignées et boutons" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#c8a840,#a88820)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Quincaillerie</p>
           <h3 class="product-card__title">Poignées &amp; Boutons</h3>
-          <p class="product-card__desc">Large sélection de poignées et boutons de meuble. Style moderne ou classique, finitions variées : inox, chrome, or, noir mat.</p>
+          <p class="product-card__desc">Designs modernes et classiques : barres, boutons, gorge, J-pull. Finitions inox, noir mat, laiton, chrome, bronze.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 2,50 €<small>/pièce</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('poignees')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
-      <!-- Coulisses -->
-      <article class="product-card fade-in-up" data-category="quincaillerie">
+      <!-- Coulisses de Tiroir -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="coulisses">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Rail top -->
-            <rect x="8" y="22" width="48" height="6" rx="2" stroke="#C9A531" stroke-width="2" fill="none"/>
-            <!-- Rail bottom -->
-            <rect x="8" y="36" width="48" height="6" rx="2" stroke="#C9A531" stroke-width="2" fill="none"/>
-            <!-- Slider -->
-            <rect x="14" y="24" width="18" height="16" rx="2" fill="#C9A531" opacity=".6"/>
-            <!-- Arrow -->
-            <path d="M36 32 L44 32" stroke="#C9A531" stroke-width="2" stroke-linecap="round"/>
-            <path d="M41 29 L44 32 L41 35" stroke="#C9A531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Coulisses de tiroir" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#666,#444)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Quincaillerie</p>
           <h3 class="product-card__title">Coulisses de Tiroir</h3>
-          <p class="product-card__desc">Coulisses à billes ou à galets pour tiroirs silencieux. Extension totale ou partielle, charge de 10 à 70 kg.</p>
+          <p class="product-card__desc">Coulisses à billes ou à galets, fermeture amortie (soft-close), sortie totale ou partielle. Charge jusqu'à 70 kg.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 8 €<small>/paire</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('coulisses')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Visserie -->
-      <article class="product-card fade-in-up" data-category="quincaillerie">
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="visserie">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Screw shapes -->
-            <line x1="20" y1="16" x2="20" y2="44" stroke="#C9A531" stroke-width="3" stroke-linecap="round"/>
-            <path d="M16 16 Q20 12 24 16" fill="#C9A531"/>
-            <line x1="16" y1="22" x2="24" y2="22" stroke="#C9A531" stroke-width="1.5"/>
-            <line x1="17" y1="26" x2="23" y2="26" stroke="#C9A531" stroke-width="1.5"/>
-            <line x1="18" y1="30" x2="22" y2="30" stroke="#C9A531" stroke-width="1.5"/>
-            <line x1="32" y1="20" x2="32" y2="48" stroke="#C9A531" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-            <path d="M28 20 Q32 16 36 20" fill="#C9A531" opacity=".7"/>
-            <line x1="28" y1="26" x2="36" y2="26" stroke="#C9A531" stroke-width="1.5" opacity=".7"/>
-            <line x1="44" y1="18" x2="44" y2="46" stroke="#C9A531" stroke-width="3" stroke-linecap="round" opacity=".5"/>
-            <path d="M40 18 Q44 14 48 18" fill="#C9A531" opacity=".5"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Visserie professionnelle" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#777,#555)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Quincaillerie</p>
           <h3 class="product-card__title">Visserie Professionnelle</h3>
-          <p class="product-card__desc">Vis, boulons, écrous et chevilles de qualité professionnelle. En acier, inox ou laiton selon application et environnement.</p>
+          <p class="product-card__desc">Vis à bois, chevilles, boulons et tirefonds en acier inoxydable A2/A4 et acier zingué. Conditionnement boîte ou vrac.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 3,50 €<small>/boîte</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('visserie')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
-      <!-- Chants -->
-      <article class="product-card fade-in-up" data-category="quincaillerie">
+      <!-- Chants de Bordure -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="chants">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Panel edge view -->
-            <rect x="10" y="20" width="44" height="24" rx="2" fill="#C9A531" opacity=".15" stroke="#C9A531" stroke-width="2"/>
-            <!-- Edge banding strip -->
-            <rect x="10" y="20" width="4" height="24" rx="1" fill="#C9A531" opacity=".9"/>
-            <!-- Coil symbol -->
-            <path d="M36 28 Q40 28 40 32 Q40 36 36 36 Q32 36 32 32" stroke="#C9A531" stroke-width="2" fill="none"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1601661246756-4e08c5ad4012?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Chants de bordure" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#b89060,#a07040)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Quincaillerie</p>
           <h3 class="product-card__title">Chants de Bordure</h3>
-          <p class="product-card__desc">Chants PVC ou ABS pour finir les tranches de panneaux. Assortis aux mélaminés pour un rendu professionnel et durable.</p>
+          <p class="product-card__desc">Chants PVC et ABS thermocollants. Finition parfaite des tranches, disponibles dans tous les décors mélaminés.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 0,80 €<small>/ml</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('chants')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
-      <!-- ---- OUTILS & ÉQUIPEMENT ---- -->
+      <!-- ══════════════ OUTILS & ÉQUIPEMENT ══════════════ -->
 
-      <!-- Scies -->
-      <article class="product-card fade-in-up" data-category="outils">
+      <!-- Scies de Précision -->
+      <article class="product-card fade-in-up" data-category="outils"
+               data-modal="scies">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <rect x="10" y="28" width="44" height="8" rx="2" fill="#C9A531" opacity=".8"/>
-            <polygon points="10,28 10,36 2,32" fill="#C9A531"/>
-            <path d="M14 28 L14 22 L18 28 L18 22 L22 28 L22 22 L26 28 L26 22 L30 28 L30 22 L34 28 L34 22 L38 28 L38 22 L42 28 L42 22 L46 28 L46 22 L50 28" stroke="#C9A531" stroke-width="1.5" fill="none"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Scies de précision" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#3a3a5a,#5a5a8a)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Outils &amp; Équipement</p>
           <h3 class="product-card__title">Scies de Précision</h3>
-          <p class="product-card__desc">Scies circulaires, à table et à format pour coupes nettes. Équipements professionnels pour chantiers et ateliers.</p>
+          <p class="product-card__desc">Scies circulaires, scies sur table et scies à format professionnelles. Coupes nettes et précises sur tous types de panneaux.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">Sur devis<small>&nbsp;</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('scies')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
-      <!-- Lames -->
-      <article class="product-card fade-in-up" data-category="outils">
+      <!-- Lames de Scie -->
+      <article class="product-card fade-in-up" data-category="outils"
+               data-modal="lames">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Circular blade -->
-            <circle cx="32" cy="32" r="18" stroke="#C9A531" stroke-width="2" fill="none"/>
-            <circle cx="32" cy="32" r="4" fill="#C9A531"/>
-            <!-- Teeth around circle -->
-            <path d="M32 14 L30 10 L32 8 L34 10 Z" fill="#C9A531"/>
-            <path d="M46 18 L50 18 L50 22 L47 21 Z" fill="#C9A531"/>
-            <path d="M50 32 L54 30 L56 32 L54 34 Z" fill="#C9A531"/>
-            <path d="M46 46 L47 43 L50 42 L50 46 Z" fill="#C9A531"/>
-            <path d="M32 50 L34 54 L32 56 L30 54 Z" fill="#C9A531"/>
-            <path d="M18 46 L14 46 L14 42 L17 43 Z" fill="#C9A531"/>
-            <path d="M14 32 L10 34 L8 32 L10 30 Z" fill="#C9A531"/>
-            <path d="M18 18 L17 21 L14 22 L14 18 Z" fill="#C9A531"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Lames de scie" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#4a4a6a,#2a2a4a)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Outils &amp; Équipement</p>
           <h3 class="product-card__title">Lames de Scie</h3>
-          <p class="product-card__desc">Lames carbure pour toutes coupes : débit, finition, mélaminé, aggloméré. Longue durée de vie et coupe nette.</p>
+          <p class="product-card__desc">Lames carbure haute qualité pour scies circulaires. Coupes nettes sans arrachement. Diamètres 190 à 350 mm.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 18 €<small>/lame</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('lames')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Accessoires -->
-      <article class="product-card fade-in-up" data-category="outils">
+      <article class="product-card fade-in-up" data-category="outils"
+               data-modal="accessoires">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Wrench -->
-            <path d="M18 10 C14 14 14 22 18 26 L40 48 C42 50 46 50 48 48 C50 46 50 42 48 40 L26 18 C22 14 22 6 18 10Z" stroke="#C9A531" stroke-width="2" fill="none"/>
-            <circle cx="44" cy="44" r="4" stroke="#C9A531" stroke-width="2" fill="none"/>
-            <circle cx="18" cy="14" r="4" stroke="#C9A531" stroke-width="2" fill="none"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Accessoires outillage" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#4a6a3a,#3a5a2a)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Outils &amp; Équipement</p>
           <h3 class="product-card__title">Accessoires</h3>
-          <p class="product-card__desc">Outillage et accessoires divers : serre-joints, tréteaux, réglets, équipements de protection individuelle.</p>
+          <p class="product-card__desc">Serres-joints, réglets, équerre, mètre ruban, niveau. Tout le petit outillage nécessaire pour une pose parfaite.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 4 €<small>/pièce</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('accessoires')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
       <!-- Consommables -->
-      <article class="product-card fade-in-up" data-category="outils">
+      <article class="product-card fade-in-up" data-category="outils"
+               data-modal="consommables">
         <div class="product-card__image">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <!-- Sandpaper / roll -->
-            <rect x="16" y="24" width="32" height="16" rx="8" stroke="#C9A531" stroke-width="2.5" fill="none"/>
-            <rect x="24" y="28" width="16" height="8" rx="4" fill="#C9A531" opacity=".4"/>
-            <!-- Dots pattern -->
-            <circle cx="20" cy="48" r="2" fill="#C9A531" opacity=".7"/>
-            <circle cx="28" cy="50" r="2" fill="#C9A531" opacity=".7"/>
-            <circle cx="36" cy="49" r="2" fill="#C9A531" opacity=".7"/>
-            <circle cx="44" cy="48" r="2" fill="#C9A531" opacity=".7"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop&auto=format&q=80"
+               alt="Consommables" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#2C1A0E,#4a3020)'">
         </div>
         <div class="product-card__body">
           <p class="product-card__category">Outils &amp; Équipement</p>
           <h3 class="product-card__title">Consommables</h3>
-          <p class="product-card__desc">Papier abrasif, colles, masques, gants et consommables professionnels. Réassorts rapides pour ne jamais manquer de rien.</p>
+          <p class="product-card__desc">Colles à bois, stains, vernis, huiles et cires pour la finition et la protection de vos ouvrages en bois.</p>
           <div class="product-card__footer">
-            <span class="product-card__price">Sur devis</span>
-            <a href="contact.html" class="btn btn-gold btn-sm">Devis</a>
+            <div class="product-card__price">À partir de 12 €<small>/unité</small></div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('consommables')">Voir la fiche</button>
           </div>
         </div>
       </article>
 
     </div><!-- /#products-grid -->
-
-    <!-- CTA block -->
-    <div style="margin-top:3rem; text-align:center;" class="fade-in-up">
-      <p style="color:var(--color-gray); margin-bottom:1rem;">Vous ne trouvez pas ce que vous cherchez&nbsp;? Contactez-nous&nbsp;!</p>
-      <a href="contact.html" class="btn btn-gold">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-        Demander un Devis Sur Mesure
-      </a>
-    </div>
-
   </div>
 </section>
 
-<!-- ============================================================
-     FOOTER
-     ============================================================ -->
-<footer class="site-footer" role="contentinfo">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <a href="index.html" class="logo" style="margin-bottom:1.25rem; display:inline-flex;">
-          <svg class="logo__icon" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-            <circle cx="18" cy="18" r="13" stroke="#C9A531" stroke-width="2"/>
-            <rect x="10" y="10" width="16" height="16" rx="3" stroke="#C9A531" stroke-width="1.5"/>
-            <polygon points="15,14 15,22 23,18" fill="#E04A2E"/>
-          </svg>
-          <span class="logo__text">SIPANO</span>
-        </a>
-        <p>Spécialiste de la découpe de bois sur mesure depuis plus de 20 ans à Villiers-sur-Marne.</p>
-        <div class="social-icons">
-          <a href="#" class="social-icon" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
-          <a href="#" class="social-icon" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
-          <a href="#" class="social-icon" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-col__title">Navigation</h3>
-        <a href="index.html">Accueil</a>
-        <a href="produits.html">Produits</a>
-        <a href="a-propos.html">À Propos</a>
-        <a href="contact.html">Contact</a>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-col__title">Services</h3>
-        <a href="contact.html">Découpe personnalisée</a>
-        <a href="contact.html">Livraison</a>
-        <a href="contact.html">Conseil client</a>
-        <a href="contact.html">Devis gratuit</a>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-col__title">Légal</h3>
-        <a href="#">Mentions légales</a>
-        <a href="#">Politique de confidentialité</a>
-        <a href="#">Conditions d'utilisation</a>
-        <a href="#">Cookies</a>
-      </div>
+<!-- ══════════════════════════════════════════════════════
+     MODALES FICHES PRODUIT
+══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Fiche produit">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" id="modal-close" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">
+        <div class="logo-mark"><svg class="logo-icon" viewBox="0 0 26 26" fill="none"><rect x="2" y="5" width="22" height="16" rx="3" stroke="#C9A531" stroke-width="1.8"/><circle cx="13" cy="13" r="5" stroke="#C9A531" stroke-width="1.8"/><circle cx="13" cy="13" r="2.5" fill="#C9A531"/><polygon points="8,2 14,5 8,8" fill="#e05234"/></svg></div>
+        <span class="logo-text" style="color:var(--gold)">SIPANO</span>
+      </a>
+      <p>Votre partenaire de confiance pour la découpe de bois et les matériaux professionnels.</p>
     </div>
+    <div class="footer-col"><h4>Navigation</h4><ul><li><a href="index.html">Accueil</a></li><li><a href="produits.html">Produits</a></li><li><a href="a-propos.html">À Propos</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Services</h4><ul><li><a href="contact.html#configurateur">Découpe personnalisée</a></li><li><a href="#">Livraison</a></li><li><a href="#">Conseil client</a></li><li><a href="contact.html#configurateur">Devis gratuit</a></li></ul></div>
+    <div class="footer-col"><h4>Légal</h4><ul><li><a href="#">Mentions légales</a></li><li><a href="#">Politique de confidentialité</a></li><li><a href="#">Conditions d'utilisation</a></li><li><a href="#">Cookies</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <div class="container">
-      <p>&copy; 2024 SIPANO. Tous droits réservés. — 96 Avenue Félix Faure, 94350 Villiers-sur-Marne</p>
-    </div>
+    <span>© 2026 SIPANO. Tous droits réservés.</span>
+    <span>Conçu avec <span style="color:var(--gold)">♥</span> pour les professionnels du bois.</span>
   </div>
 </footer>
 
 <script src="js/main.js"></script>
+<script>
+/* ── DONNÉES FICHES PRODUIT ──────────────────────────────── */
+const PRODUCTS = {
+
+  'mdf-19': {
+    cat: 'Bois & Panneaux', ref: 'REF : MDF-19-STD',
+    title: 'MDF 19 mm',
+    img: 'https://images.unsplash.com/photo-1601758174493-45d0a4d3e407?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Panneau MDF 19mm tranche lisse',
+    price: '28 €', priceUnit: '/m²', priceNote: 'Prix HT départ entrepôt. Découpe sur mesure en option.',
+    desc: 'Le MDF (Medium Density Fibreboard) 19 mm est le panneau de référence pour la fabrication de meubles, de fronts d\'armoires, de façades de cuisine et tout aménagement intérieur. Sa surface lisse 2 faces se peint facilement et offre un rendu professionnel impeccable.',
+    specs: [
+      ['Format standard', '2 440 × 1 220 mm'],
+      ['Épaisseur', '19 mm (aussi dispo : 9, 12, 16, 22, 25 mm)'],
+      ['Densité', '760 – 780 kg/m³'],
+      ['Surface', 'Lisse 2 faces, prête à peindre'],
+      ['Classe d\'émission', 'E1 (formaldéhyde < 8 mg/100g)'],
+      ['Norme', 'EN 622-5 MDF'],
+      ['Usage recommandé', 'Mobilier, agencement intérieur sec'],
+      ['Certifications', 'PEFC / FSC disponible'],
+    ],
+    formats: ['2440×1220 mm', '2800×1220 mm', '3050×1220 mm', 'Sur mesure'],
+  },
+
+  'mdf-hydro': {
+    cat: 'Bois & Panneaux', ref: 'REF : MDF-H-19',
+    title: 'MDF Hydro',
+    img: 'https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Panneau MDF Hydro coloris vert',
+    price: '38 €', priceUnit: '/m²', priceNote: 'Prix HT départ entrepôt.',
+    desc: 'Le MDF Hydro est traité pour résister à l\'humidité (classe d\'utilisation 2). Reconnaissable à son coloris vert, il est idéal pour les environnements humides : cuisines, salles de bains, buanderies et sous-sols. Il conserve toutes les propriétés mécaniques du MDF standard tout en offrant une résistance accrue à l\'eau.',
+    specs: [
+      ['Format standard', '2 440 × 1 220 mm'],
+      ['Épaisseur', '19 mm (aussi dispo : 12, 16, 22 mm)'],
+      ['Densité', '780 kg/m³'],
+      ['Résistance humidité', 'Classe 2 — usage humide'],
+      ['Identification', 'Coloris vert'],
+      ['Gonflement', '< 12 % après 24h d\'immersion'],
+      ['Norme', 'EN 622-5 HLS'],
+      ['Usage recommandé', 'Cuisine, salle de bain, espaces humides'],
+    ],
+    formats: ['2440×1220 mm', '2800×1220 mm', 'Sur mesure'],
+  },
+
+  'melamine-blanc': {
+    cat: 'Bois & Panneaux', ref: 'REF : MEL-BL-18',
+    title: 'Mélaminé Blanc',
+    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Panneau mélaminé blanc surface lisse',
+    price: '22 €', priceUnit: '/m²', priceNote: 'Prix HT. Chant de bordure assorti disponible.',
+    desc: 'Le mélaminé blanc est le panneau le plus utilisé en aménagement intérieur. Son revêtement mélaminé blanc offre une finition lisse, résistante aux rayures et facile à nettoyer. Il est parfait pour les étagères, les armoires, les meubles de cuisine et les plans de travail peints.',
+    specs: [
+      ['Format standard', '2 440 × 1 220 mm'],
+      ['Épaisseurs disponibles', '16, 18, 19, 22, 25 mm'],
+      ['Âme', 'Panneau de particules'],
+      ['Revêtement', 'Mélaminé 2 faces'],
+      ['Résistance rayures', 'Classe AC1-AC2'],
+      ['Couleur', 'Blanc pur (RAL 9016)'],
+      ['Norme', 'EN 14322'],
+      ['Usage recommandé', 'Mobilier, cuisine, étagères'],
+    ],
+    formats: ['2440×1220 mm', '2800×1220 mm', '2070×2800 mm', 'Sur mesure'],
+  },
+
+  'melamine-decor': {
+    cat: 'Bois & Panneaux', ref: 'REF : MEL-DEC',
+    title: 'Mélaminé Décor',
+    img: 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Panneau mélaminé décor imitation chêne',
+    price: '26 €', priceUnit: '/m²', priceNote: 'Prix HT selon décor. +200 références disponibles.',
+    desc: 'La gamme Mélaminé Décor propose plus de 200 références : imitations bois (chêne, noyer, hêtre, frêne, pin…), béton, ardoise, marbre, et teintes unies. Idéale pour des réalisations tendance et personnalisées, cette gamme répond aux exigences des designers et artisans les plus créatifs.',
+    specs: [
+      ['Format standard', '2 440 × 1 220 mm'],
+      ['Épaisseurs disponibles', '16, 18, 19, 22, 25 mm'],
+      ['Âme', 'Panneau de particules E1'],
+      ['Revêtement', 'Mélaminé 2 faces haute qualité'],
+      ['Nb de décors', '+200 références'],
+      ['Résistance chaleur', 'Jusqu\'à 120°C'],
+      ['Norme', 'EN 14322'],
+      ['Usage recommandé', 'Mobilier design, cuisine, bureau'],
+    ],
+    formats: ['2440×1220 mm', '2800×1220 mm', 'Sur mesure'],
+  },
+
+  'contreplaque': {
+    cat: 'Bois & Panneaux', ref: 'REF : CTR-BB-18',
+    title: 'Contreplaqué BB/BB',
+    img: 'https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Contreplaqué tranche multiplis',
+    price: '32 €', priceUnit: '/m²', priceNote: 'Prix HT selon épaisseur et essence.',
+    desc: 'Le contreplaqué est constitué de plis de bois croisés à 90°, ce qui lui confère une excellente résistance mécanique dans toutes les directions. Disponible en peuplier, bouleau et okumé. Finition BB/BB (deux faces poncées, sans nœuds apparents). Idéal pour les constructions demandant rigidité et légèreté.',
+    specs: [
+      ['Format standard', '2 440 × 1 220 mm'],
+      ['Épaisseurs disponibles', '4, 6, 9, 12, 15, 18, 21, 25 mm'],
+      ['Essences', 'Peuplier, Bouleau, Okoumé'],
+      ['Qualité faces', 'BB/BB (poncées, sans nœuds)'],
+      ['Collage', 'Intérieur (classe 1 & 2)'],
+      ['Module d\'élasticité', '7 000 – 9 500 N/mm²'],
+      ['Norme', 'EN 636'],
+      ['Usage recommandé', 'Construction, habillage, fond de meuble'],
+    ],
+    formats: ['2440×1220 mm', '2500×1220 mm', '3000×1500 mm', 'Sur mesure'],
+  },
+
+  'egger': {
+    cat: 'Bois & Panneaux', ref: 'REF : EGG-H1145',
+    title: 'Egger Premium',
+    img: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Panneau Egger premium décor bois',
+    price: '34 €', priceUnit: '/m²', priceNote: 'Prix HT. Large choix de décors Egger disponibles.',
+    desc: 'La gamme Egger représente le meilleur de la fabrication européenne. Décors exclusifs, résistance à l\'abrasion et aux rayures de classe supérieure, certifications environnementales PEFC et FSC. Parfait pour les projets haut de gamme en menuiserie, agencement de magasins et mobilier professionnel.',
+    specs: [
+      ['Format standard', '2 800 × 2 070 mm'],
+      ['Épaisseurs disponibles', '16, 18, 19, 22, 25 mm'],
+      ['Fabrication', 'Autriche — usines Egger certifiées'],
+      ['Résistance abrasion', 'Classe AC3-AC4'],
+      ['Certifications', 'PEFC, FSC, ISO 14001'],
+      ['Émission formaldéhyde', 'E1 — classe A'],
+      ['Norme', 'EN 14322'],
+      ['Usage recommandé', 'Mobilier premium, agencement commercial'],
+    ],
+    formats: ['2800×2070 mm', '2440×1220 mm', 'Sur mesure'],
+  },
+
+  'osb': {
+    cat: 'Bois & Panneaux', ref: 'REF : OSB3-18',
+    title: 'OSB 3',
+    img: 'https://images.unsplash.com/photo-1587174486073-ae5a5cff23aa?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Panneau OSB 3 lamelles orientées',
+    price: '18 €', priceUnit: '/m²', priceNote: 'Prix HT départ entrepôt.',
+    desc: 'L\'OSB 3 (Oriented Strand Board) est fabriqué à partir de lamelles de bois orientées et encollées sous haute pression. Sa classe 3 le rend résistant à l\'humidité, idéal pour les charpentes, les ossatures bois, les planchers et les toitures. Solution économique et performante pour la construction.',
+    specs: [
+      ['Format standard', '2 500 × 1 250 mm'],
+      ['Épaisseurs disponibles', '9, 12, 15, 18, 22, 25 mm'],
+      ['Classe', 'OSB 3 — milieux humides'],
+      ['Résistance à la flexion', '22 N/mm² (sens du fil)'],
+      ['Module d\'élasticité', '3 500 N/mm²'],
+      ['Norme', 'EN 300 — OSB/3'],
+      ['Usage recommandé', 'Construction, ossature bois, plancher'],
+      ['Certifications', 'CE, PEFC'],
+    ],
+    formats: ['2500×1250 mm', '2800×1250 mm', 'Sur mesure'],
+  },
+
+  'charnieres': {
+    cat: 'Quincaillerie', ref: 'REF : CHAR-BLUM-110',
+    title: 'Charnières Professionnelles',
+    img: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Charnière invisible réglable 3 axes',
+    price: '1,20 €', priceUnit: '/pièce', priceNote: 'Prix HT. Tarifs dégressifs dès 50 pièces.',
+    desc: 'Notre gamme de charnières professionnelles comprend des charnières à clip, invisibles et réglables sur 3 axes (hauteur, profondeur, latéral). Marques Blum (Clip Top), Hettich (Sensys) et Häfele. Fermeture soft-close intégrée ou en option. Pour portes alvéolaires, MDF, bois massif et verre.',
+    specs: [
+      ['Type', 'Charnière invisible à embase'],
+      ['Ouverture', '95°, 110°, 165°, 170° selon modèle'],
+      ['Réglage', '3 axes (H, P, L) sans outil'],
+      ['Charge max.', '40 kg / charnière'],
+      ['Finition', 'Nickelé, inox, noir mat'],
+      ['Soft-close', 'Intégré (Blum) ou en option'],
+      ['Marques', 'Blum, Hettich, Häfele, Grass'],
+      ['Compatibilité', 'MDF, aggloméré, bois massif, verre'],
+    ],
+    formats: ['Ouverture 95°', 'Ouverture 110°', 'Ouverture 165°', 'Angle / coin'],
+  },
+
+  'poignees': {
+    cat: 'Quincaillerie', ref: 'REF : POI-BAR-128',
+    title: 'Poignées & Boutons',
+    img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Poignées de meuble collection moderne',
+    price: '2,50 €', priceUnit: '/pièce', priceNote: 'Prix HT. Catalogue de +500 références.',
+    desc: 'Large sélection de poignées et boutons pour meubles, cuisines et salles de bains. Des styles modernes épurés aux classiques intemporels : barres tubulaires, profils en J, boutons ronds ou carrés. Finitions disponibles : inox brossé, noir mat, laiton brossé, or rose, chrome brillant.',
+    specs: [
+      ['Types', 'Barre, profil J, bouton, coquille'],
+      ['Entraxes', '32, 64, 96, 128, 160, 192, 224 mm'],
+      ['Finitions', 'Inox, noir mat, laiton, or rose, chrome'],
+      ['Matériaux', 'Zamak, aluminium, inox, acier'],
+      ['Épaisseur porte', 'Compatible 12 à 25 mm'],
+      ['Vis incluses', 'Oui (acier inox)'],
+      ['Nb de références', '+500 modèles'],
+      ['Garantie', '10 ans usage normal'],
+    ],
+    formats: ['Entraxe 96mm', 'Entraxe 128mm', 'Entraxe 160mm', 'Boutons sans entraxe'],
+  },
+
+  'coulisses': {
+    cat: 'Quincaillerie', ref: 'REF : COL-BB-500',
+    title: 'Coulisses de Tiroir',
+    img: 'https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Coulisses à billes sortie totale',
+    price: '8 €', priceUnit: '/paire', priceNote: 'Prix HT. Vendu par paire. Longueurs 250 à 600mm.',
+    desc: 'Coulisses à billes de précision pour une ouverture fluide et silencieuse. Modèles à sortie partielle (3/4) ou sortie totale (100%). Avec ou sans fermeture amortie (soft-close) et push-to-open. Marques Blum Tandem, Hettich Actro et références génériques professionnelles.',
+    specs: [
+      ['Type', 'Coulisse à billes double paroi'],
+      ['Sortie', 'Partielle (75%) ou totale (100%)'],
+      ['Longueurs', '250, 300, 350, 400, 450, 500, 550, 600 mm'],
+      ['Charge max.', '30 kg (std) / 70 kg (lourde)'],
+      ['Soft-close', 'Disponible sur tous les modèles'],
+      ['Push-to-open', 'Sur modèles sélectionnés'],
+      ['Finition', 'Blanc, gris, inox'],
+      ['Marques', 'Blum, Hettich, Häfele'],
+    ],
+    formats: ['300 mm', '400 mm', '500 mm', '600 mm'],
+  },
+
+  'visserie': {
+    cat: 'Quincaillerie', ref: 'REF : VIS-AX2-45',
+    title: 'Visserie Professionnelle',
+    img: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Visserie acier inoxydable professionnelle',
+    price: '3,50 €', priceUnit: '/boîte', priceNote: 'Prix HT boîte de 100 pièces. Tarifs vrac disponibles.',
+    desc: 'Gamme complète de visserie pour la menuiserie et la construction bois. Vis à bois tête fraisée Torx, chevilles universelles, boulons et tirefonds. Disponibles en acier zingué pour intérieur et en inox A2/A4 pour usage extérieur. Conditionnement boîte de 100 ou sac vrac.',
+    specs: [
+      ['Types', 'Vis bois, cheville, boulon, tirefond'],
+      ['Têtes', 'Fraisée, ronde, bombée, hexagonale'],
+      ['Empreintes', 'Torx, Phillips, Pozidriv'],
+      ['Diamètres', '3,5 à 10 mm'],
+      ['Longueurs', '16 à 200 mm'],
+      ['Matériaux', 'Acier zingué, inox A2, inox A4'],
+      ['Conditionnement', 'Boîte 100 pcs ou sac vrac'],
+      ['Normes', 'EN ISO 1481, EN ISO 7049'],
+    ],
+    formats: ['Ø3,5mm', 'Ø4mm', 'Ø5mm', 'Ø6mm', 'Tirefonds'],
+  },
+
+  'chants': {
+    cat: 'Quincaillerie', ref: 'REF : CHANT-PVC-22',
+    title: 'Chants de Bordure',
+    img: 'https://images.unsplash.com/photo-1601661246756-4e08c5ad4012?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Chants de bordure PVC thermocollants',
+    price: '0,80 €', priceUnit: '/ml', priceNote: 'Prix HT. Disponible dans tous les décors mélaminés.',
+    desc: 'Chants de bordure PVC et ABS thermocollants pour la finition des tranches de panneaux. Disponibles dans toute la gamme de décors mélaminés (blanc, bois, couleurs). Pose à la bordeuse manuelle ou automatique. Épaisseurs 0,4 mm (PVC), 1 mm et 2 mm (ABS pour bords arrondis).',
+    specs: [
+      ['Matériaux', 'PVC (0,4mm), ABS (1mm, 2mm)'],
+      ['Largeurs', '19, 22, 32, 43, 54 mm'],
+      ['Longueur par rouleau', '50 ml'],
+      ['Colle', 'Thermocollante pré-encollée'],
+      ['Décors', 'Assortis à tous les mélaminés'],
+      ['Finition ABS', 'Bord arrondi possible'],
+      ['Pose', 'Bordeuse manuelle ou automatique'],
+      ['Application', 'Champs de panneaux 12 à 40 mm'],
+    ],
+    formats: ['Largeur 22mm', 'Largeur 32mm', 'Largeur 43mm', 'Largeur 54mm'],
+  },
+
+  'scies': {
+    cat: 'Outils & Équipement', ref: 'REF : SCI-FORMAT',
+    title: 'Scies de Précision',
+    img: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Scie à format professionnelle atelier',
+    price: 'Sur devis', priceUnit: '', priceNote: 'Service de découpe disponible directement en magasin.',
+    desc: 'Nous proposons à la vente des scies circulaires portatives et sur table de marques professionnelles (Festool, Makita, DeWalt). Notre atelier est également équipé de scies à format numériques pour vous offrir le service de découpe sur mesure le plus précis du secteur. Coupes droites, onglets et rainures.',
+    specs: [
+      ['Types', 'Scie circulaire, scie sur table, scie à format'],
+      ['Marques', 'Festool, Makita, DeWalt, Altendorf'],
+      ['Précision', '± 0,1 mm sur scie à format CNC'],
+      ['Profondeur de coupe', 'Jusqu\'à 90 mm'],
+      ['Diamètre lame', '160 à 350 mm'],
+      ['Puissance', '1 400 à 5 000 W'],
+      ['Financement', 'Location longue durée possible'],
+      ['SAV', 'Entretien et réparation en magasin'],
+    ],
+    formats: ['Scie portative', 'Scie sur table', 'Scie à format', 'Scie à onglets'],
+  },
+
+  'lames': {
+    cat: 'Outils & Équipement', ref: 'REF : LAM-TCT-24D',
+    title: 'Lames de Scie',
+    img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Lame de scie circulaire carbure TCT',
+    price: '18 €', priceUnit: '/lame', priceNote: 'Prix HT selon diamètre et nombre de dents.',
+    desc: 'Lames de scie circulaire à plaquettes carbure (TCT) pour coupes nettes sans arrachement sur MDF, mélaminé, contreplaqué et bois massif. Gamme universelle et gamme spéciale mélaminé (dents négatives). Compatibles toutes marques de scies circulaires.',
+    specs: [
+      ['Type', 'Lame TCT carbure (plaquettes brasées)'],
+      ['Diamètres', '165, 190, 210, 250, 300, 315, 350 mm'],
+      ['Nombre de dents', '24, 40, 48, 60, 80 dents'],
+      ['Alésage', '20, 25, 30 mm'],
+      ['Épaisseur de coupe', '2,8 à 3,5 mm'],
+      ['Angle d\'attaque', '+5° (bois) / -5° (mélaminé)'],
+      ['Matière dents', 'Carbure de tungstène K10/K20'],
+      ['Usage', 'Bois massif, panneaux, mélaminé'],
+    ],
+    formats: ['Ø165mm 24D', 'Ø190mm 40D', 'Ø250mm 60D', 'Ø315mm 80D'],
+  },
+
+  'accessoires': {
+    cat: 'Outils & Équipement', ref: 'REF : ACC-BOIS',
+    title: 'Accessoires',
+    img: 'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Accessoires outillage menuiserie',
+    price: '4 €', priceUnit: '/pièce', priceNote: 'Prix HT selon références.',
+    desc: 'Tout l\'outillage complémentaire pour vos travaux de menuiserie : serres-joints, serre-joints à ressort, réglets inox, équerres, mètres rubans, niveaux, mortaises, gabarits de perçage. Marques professionnelles Bessey, Stanley, Irwin et références économiques.',
+    specs: [
+      ['Serres-joints', 'Bar, à coulisse, à ressort, en G'],
+      ['Mesure', 'Réglets inox, mètres rubans, niveaux'],
+      ['Traçage', 'Trusquins, équerres, compas'],
+      ['Perçage', 'Gabarits, centreurs, forets'],
+      ['Marques', 'Bessey, Stanley, Irwin, Wolfcraft'],
+      ['Garantie', '1 à 5 ans selon référence'],
+      ['Disponibilité', 'Stock permanent en magasin'],
+      ['Livraison', 'Express 24h disponible'],
+    ],
+    formats: ['Serres-joints', 'Mesure & traçage', 'Perçage', 'Fixation'],
+  },
+
+  'consommables': {
+    cat: 'Outils & Équipement', ref: 'REF : CONS-BOIS',
+    title: 'Consommables',
+    img: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=900&h=500&fit=crop&auto=format&q=85',
+    imgAlt: 'Produits de finition bois colles vernis',
+    price: '12 €', priceUnit: '/unité', priceNote: 'Prix HT selon produit et conditionnement.',
+    desc: 'Gamme complète de produits de finition et de collage pour le bois : colles à bois (vinylique, polyuréthane), stains et lazures, vernis (satin, mat, brillant), huiles et cires naturelles, apprêts et sous-couches. Pour une finition professionnelle et durable sur tous supports bois.',
+    specs: [
+      ['Colles', 'Vinylique D2/D3/D4, PU monocomposant'],
+      ['Vernis', 'Satin, mat, brillant, aqua ou solvant'],
+      ['Huiles', 'Huile dure, huile teck, huile parquet'],
+      ['Stains/Lazures', 'Pénétrant ou filmogène, intérieur/ext.'],
+      ['Cires', 'Cire d\'abeille, cire dure, cire liquide'],
+      ['Conditionnements', '250ml, 1L, 2,5L, 5L, 10L'],
+      ['Marques', 'Rubio, Osmo, Blanchon, Bona'],
+      ['Temps de séchage', '1h à 24h selon produit'],
+    ],
+    formats: ['Colle à bois', 'Vernis & lazure', 'Huiles & cires', 'Apprêts'],
+  },
+};
+
+/* ── MODAL OPEN/CLOSE ───────────────────────────────────── */
+const overlay = document.getElementById('modal-overlay');
+const content = document.getElementById('modal-content');
+
+function openModal(id) {
+  const p = PRODUCTS[id];
+  if (!p) return;
+
+  content.innerHTML = `
+    <div class="modal-hero">
+      <div class="modal-img">
+        <img src="${p.img}" alt="${p.imgAlt}" loading="lazy">
+      </div>
+      <div class="modal-header">
+        <div class="cat">${p.cat}</div>
+        <h2>${p.title}</h2>
+        <div class="ref">${p.ref}</div>
+        <div class="modal-price">${p.price}<small>${p.priceUnit}</small></div>
+        <div class="modal-price-note">${p.priceNote}</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h3>Description</h3>
+      <p>${p.desc}</p>
+
+      <h3>Caractéristiques techniques</h3>
+      <table class="specs-table">
+        ${p.specs.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+      </table>
+
+      <h3>Formats disponibles</h3>
+      <div class="formats-list">
+        ${p.formats.map(f => `<span class="format-chip">${f}</span>`).join('')}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="contact.html#configurateur" class="btn btn-gold">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        Demander un Devis
+      </a>
+      <a href="tel:+33168093580" class="btn btn-outline-brown">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 7.81 2 2 0 015.18 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6z"/></svg>
+        01 68 09 35 80
+      </a>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+overlay.addEventListener('click', function(e) {
+  if (e.target === overlay) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
 </body>
 </html>
