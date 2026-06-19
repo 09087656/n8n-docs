@@ -185,7 +185,7 @@
   const state = {
     panelType: '',
     pieces: [],
-    contact: { nom: '', entreprise: '', telephone: '', email: '' },
+    contact: { nom: '', entreprise: '', telephone: '', email: '', adresse: '', message: '' },
   };
 
   /* — Step indicators — */
@@ -276,7 +276,7 @@
   }
 
   /* — Contact fields (step 3) — */
-  ['nom', 'entreprise', 'telephone', 'email'].forEach(function (field) {
+  ['nom', 'entreprise', 'telephone', 'email', 'adresse', 'message'].forEach(function (field) {
     const input = config.querySelector('#c-' + field);
     if (input) {
       input.addEventListener('input', function () {
@@ -367,6 +367,28 @@
   /* — Submit — */
   if (btnSubmit) {
     btnSubmit.addEventListener('click', function () {
+      // Sync textarea message (not covered by input event for all browsers)
+      const msgEl = config.querySelector('#c-message');
+      if (msgEl) state.contact.message = msgEl.value;
+
+      // 1. Générer le CSV
+      var csvString = window.DevisExport
+        ? window.DevisExport.generateCsv(state)
+        : null;
+
+      // 2. Téléchargement côté client
+      if (csvString && window.DevisExport) {
+        var date = new Date().toISOString().slice(0, 10);
+        var slug = (state.contact.nom || 'client').replace(/\s+/g, '-').toLowerCase();
+        window.DevisExport.downloadCsv(csvString, 'devis-sipano-' + slug + '-' + date + '.csv');
+      }
+
+      // 3. Envoi au backend (stub — aucune requête réelle pour l'instant)
+      if (csvString && window.DevisExport) {
+        window.DevisExport.sendCsvToBackend(csvString, state.contact);
+      }
+
+      // 4. Afficher le message de succès
       const successMsg = config.querySelector('#config-success');
       config.querySelector('.config-progress').style.display = 'none';
       config.querySelector('.config-body').style.display = 'none';
