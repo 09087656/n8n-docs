@@ -383,9 +383,11 @@
         window.DevisExport.downloadCsv(csvString, 'devis-sipano-' + slug + '-' + date + '.csv');
       }
 
-      // 3. Envoi au backend (stub — aucune requête réelle pour l'instant)
+      // 3. Envoi par email via EmailJS
       if (csvString && window.DevisExport) {
-        window.DevisExport.sendCsvToBackend(csvString, state.contact);
+        // On transporte le matériau dans contactInfo pour que sendDevisByEmail y ait accès
+        var contactWithMat = Object.assign({}, state.contact, { _materiau: state.panelType });
+        window.DevisExport.sendCsvToBackend(csvString, contactWithMat);
       }
 
       // 4. Afficher le message de succès

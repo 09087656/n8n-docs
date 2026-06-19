@@ -76,53 +76,127 @@ function downloadCsv(csvString, filename) {
   URL.revokeObjectURL(url);
 }
 
+/* ============================================================
+   Configuration EmailJS
+   ——————————————————————————————————————————————————————————————
+   1. Créez un compte gratuit sur https://www.emailjs.com
+   2. Ajoutez un "Email Service" (Gmail, Outlook, ou SMTP custom)
+      → notez votre SERVICE_ID
+   3. Créez un "Email Template" avec les variables ci-dessous
+      (voir README dans les commentaires de sendDevisByEmail)
+      → notez votre TEMPLATE_ID
+   4. Copiez votre "Public Key" depuis Account → API Keys
+      → notez votre PUBLIC_KEY
+   5. Remplacez les trois valeurs EMAILJS_* ci-dessous
+   ============================================================ */
+
+var EMAILJS_SERVICE_ID  = 'VOTRE_SERVICE_ID';   // ex: 'service_abc123'
+var EMAILJS_TEMPLATE_ID = 'VOTRE_TEMPLATE_ID';  // ex: 'template_xyz456'
+var EMAILJS_PUBLIC_KEY  = 'VOTRE_PUBLIC_KEY';   // ex: 'aBcDeFgHiJkL'
+
+/** Adresse qui recevra tous les devis (modifiable ici) */
+var DESTINATAIRE = 'romanfilipciuc2006@mail.ru';
+
 /**
- * Envoie le CSV au serveur (stub — à remplacer par l'intégration réelle).
+ * Encode une chaîne UTF-8 en base64 (pour la pièce jointe EmailJS).
+ * @param {string} str
+ * @returns {string}
+ */
+function toBase64(str) {
+  try {
+    return btoa(unescape(encodeURIComponent(str)));
+  } catch (e) {
+    return btoa(str);
+  }
+}
+
+/**
+ * Envoie le CSV par email via EmailJS.
  *
- * TODO: remplacer l'URL et la logique d'envoi lorsque le backend
- *       (ou OptiCoupe) sera disponible. Deux approches possibles :
- *         1. POST multipart/form-data avec le fichier en pièce jointe
- *         2. POST application/json avec le CSV encodé en base64
+ * ——— Template EmailJS à créer ———
+ * Sujet    : Nouveau devis SIPANO — {{client_nom}}
+ * Corps    :
+ *   Bonjour,
  *
- * @param {string} csvString  - Contenu CSV
- * @param {{ nom: string, entreprise: string, telephone: string, email: string, adresse: string }} contactInfo
+ *   Nouvelle demande de découpe reçue le {{date}}.
+ *
+ *   Client   : {{client_nom}}
+ *   Entreprise: {{client_entreprise}}
+ *   Téléphone: {{client_telephone}}
+ *   Email    : {{client_email}}
+ *   Adresse  : {{client_adresse}}
+ *
+ *   Message  : {{client_message}}
+ *
+ *   ——— Détail de la découpe ———
+ *   Matériau : {{materiau}}
+ *   {{csv_contenu}}
+ *
+ *   Le fichier CSV est joint à cet email.
+ *
+ * Pièce jointe (onglet "Attachments" dans EmailJS) :
+ *   Name    : devis-sipano-{{client_nom}}.csv
+ *   Data    : {{csv_base64}}
+ *   Mime    : text/csv
+ * ———————————————————————————————
+ *
+ * @param {string} csvString  - Contenu CSV généré par generateCsv()
+ * @param {{ nom, entreprise, telephone, email, adresse, message }} contactInfo
+ * @param {string} materiau   - Type de panneau sélectionné
  * @returns {Promise<void>}
  */
+function sendDevisByEmail(csvString, contactInfo, materiau) {
+  if (
+    EMAILJS_SERVICE_ID  === 'VOTRE_SERVICE_ID' ||
+    EMAILJS_TEMPLATE_ID === 'VOTRE_TEMPLATE_ID' ||
+    EMAILJS_PUBLIC_KEY  === 'VOTRE_PUBLIC_KEY'
+  ) {
+    console.warn('[SIPANO] EmailJS non configuré. Renseignez les constantes dans devis-export.js.');
+    return Promise.resolve();
+  }
+
+  if (typeof emailjs === 'undefined') {
+    console.error('[SIPANO] SDK EmailJS introuvable. Vérifiez la balise <script> dans contact.html.');
+    return Promise.resolve();
+  }
+
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  var slug = (contactInfo.nom || 'client').replace(/\s+/g, '-').toLowerCase();
+
+  var templateParams = {
+    to_email:           DESTINATAIRE,
+    date:               dateStr,
+    client_nom:         contactInfo.nom        || '—',
+    client_entreprise:  contactInfo.entreprise || '—',
+    client_telephone:   contactInfo.telephone  || '—',
+    client_email:       contactInfo.email      || '—',
+    client_adresse:     contactInfo.adresse    || '—',
+    client_message:     contactInfo.message    || '—',
+    materiau:           materiau               || '—',
+    csv_contenu:        csvString,
+    csv_base64:         toBase64('﻿' + csvString),
+    csv_filename:       'devis-sipano-' + slug + '-' + now.toISOString().slice(0, 10) + '.csv'
+  };
+
+  return emailjs
+    .init({ publicKey: EMAILJS_PUBLIC_KEY })
+    .then ? (
+      /* EmailJS v4+ : init() renvoie une promesse, puis send() */
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+    ) : (
+      /* EmailJS v3 : init() est synchrone */
+      (emailjs.init(EMAILJS_PUBLIC_KEY),
+       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams))
+    );
+}
+
+/**
+ * Alias rétrocompatible pour l'appel dans main.js.
+ * Conserve la même signature que le stub original.
+ */
 function sendCsvToBackend(csvString, contactInfo) {
-  // TODO: remplacer par l'URL de votre endpoint
-  var ENDPOINT = '/api/devis';
-
-  var formData = new FormData();
-  var csvBlob = new Blob(['﻿' + csvString], { type: 'text/csv;charset=utf-8;' });
-  formData.append('fichier_csv', csvBlob, 'devis-sipano.csv');
-  formData.append('nom',        contactInfo.nom        || '');
-  formData.append('entreprise', contactInfo.entreprise || '');
-  formData.append('telephone',  contactInfo.telephone  || '');
-  formData.append('email',      contactInfo.email      || '');
-  formData.append('adresse',    contactInfo.adresse    || '');
-  formData.append('message',    contactInfo.message    || '');
-
-  // Stub : logge le payload en console (aucune requête réelle)
-  console.info('[SIPANO] devis-export — sendCsvToBackend() stub appelé.');
-  console.info('  Endpoint prévu :', ENDPOINT);
-  console.info('  Contact :', JSON.stringify(contactInfo));
-  console.info('  CSV preview :\n', csvString);
-
-  /* Décommenter le bloc ci-dessous pour activer l'envoi réel :
-  return fetch(ENDPOINT, {
-    method: 'POST',
-    body: formData
-  })
-    .then(function (response) {
-      if (!response.ok) throw new Error('Erreur serveur : ' + response.status);
-      console.info('[SIPANO] Devis envoyé avec succès.');
-    })
-    .catch(function (err) {
-      console.error('[SIPANO] Échec de l\'envoi du devis :', err);
-    });
-  */
-
-  return Promise.resolve();
+  return sendDevisByEmail(csvString, contactInfo, contactInfo._materiau || '');
 }
 
 /* Export vers l'espace global (pas de module bundler) */
