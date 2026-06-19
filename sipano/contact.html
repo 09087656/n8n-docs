@@ -7,7 +7,6 @@
   <meta name="description" content="Contactez SIPANO pour un devis de découpe sur mesure. Configurateur en ligne, adresse, téléphone et horaires. 96 Avenue Félix Faure, Villiers-sur-Marne.">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Extra styles specific to contact page */
     .config-success {
       display: none;
       flex-direction: column;
@@ -28,13 +27,81 @@
     }
     .config-success h3 { font-size: 1.5rem; color: var(--color-primary); }
     .config-success p  { color: var(--color-gray); max-width: 400px; }
+
+    .bloc-materiau {
+      background: var(--color-white);
+      border: 2px solid var(--color-gray-light);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .bloc-materiau__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .bloc-materiau__title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .bloc-materiau select.form-input {
+      margin-bottom: 1.25rem;
+    }
+    .btn-remove-bloc {
+      background: none;
+      border: none;
+      color: var(--color-red);
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: .3rem .65rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-red);
+      transition: background var(--transition), color var(--transition);
+    }
+    .btn-remove-bloc:hover {
+      background: var(--color-red);
+      color: var(--color-white);
+    }
+    .piece-chants {
+      margin-top: .5rem;
+      font-size: .82rem;
+      color: var(--color-gray);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .75rem;
+    }
+    .piece-chants label {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .piece-chants input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--color-gold);
+    }
+    .btn-add-piece-bloc {
+      margin-top: .75rem;
+    }
+    .btn-add-materiau {
+      margin-top: .5rem;
+    }
+    .pieces-empty {
+      color: var(--color-gray);
+      font-size: .85rem;
+      font-style: italic;
+      margin-top: .5rem;
+    }
   </style>
 </head>
 <body>
 
-<!-- ============================================================
-     HEADER
-     ============================================================ -->
 <header class="site-header" role="banner">
   <div class="container">
     <div class="header-inner">
@@ -76,9 +143,7 @@
   <a href="#configurateur" class="btn btn-gold">Demander un Devis</a>
 </nav>
 
-<!-- ============================================================
-     PAGE HERO
-     ============================================================ -->
+<!-- PAGE HERO -->
 <section class="page-hero" aria-label="Nous Contacter">
   <div class="container">
     <span class="section-label">Restons en Contact</span>
@@ -87,89 +152,7 @@
   </div>
 </section>
 
-<!-- ============================================================
-     CONTACT CARDS
-     ============================================================ -->
-<section class="section" id="infos">
-  <div class="container">
-
-    <div class="contact-cards">
-
-      <!-- Adresse -->
-      <div class="contact-card fade-in-up">
-        <div class="contact-card__icon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-        </div>
-        <div class="contact-card__title">Adresse</div>
-        <div class="contact-card__value">
-          96 Avenue Félix Faure<br>
-          94350 Villiers-sur-Marne
-        </div>
-      </div>
-
-      <!-- Téléphone -->
-      <div class="contact-card fade-in-up">
-        <div class="contact-card__icon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
-            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 7.81 19.79 19.79 0 01.1 3.18 2 2 0 012.08 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.05a16 16 0 006.04 6.04l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-          </svg>
-        </div>
-        <div class="contact-card__title">Téléphone</div>
-        <div class="contact-card__value">
-          <a href="tel:+33168093580">01 68 09 35 80</a>
-        </div>
-      </div>
-
-      <!-- Email -->
-      <div class="contact-card fade-in-up">
-        <div class="contact-card__icon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
-        </div>
-        <div class="contact-card__title">Email</div>
-        <div class="contact-card__value">
-          <a href="mailto:contact@sipano.fr">contact@sipano.fr</a>
-        </div>
-      </div>
-
-      <!-- Horaires -->
-      <div class="contact-card fade-in-up">
-        <div class="contact-card__icon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </div>
-        <div class="contact-card__title">Horaires</div>
-        <div class="contact-card__value">
-          Lun–Ven : 08:00–18:00<br>
-          Sam : 08:00–12:00
-        </div>
-      </div>
-
-    </div><!-- /.contact-cards -->
-
-    <!-- Google Maps embed -->
-    <div class="map-wrap fade-in-up" aria-label="Plan d'accès SIPANO">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2629.9!2d2.5476!3d48.8232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e60d3c5e3a0f0b%3A0x4a2e8c0e0c0e0c0e!2s96+Avenue+F%C3%A9lix+Faure%2C+94350+Villiers-sur-Marne!5e0!3m2!1sfr!2sfr!4v1700000000000"
-        title="SIPANO — 96 Avenue Félix Faure, 94350 Villiers-sur-Marne"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-
-  </div>
-</section>
-
-<!-- ============================================================
-     CONFIGURATEUR DE DÉCOUPE
-     ============================================================ -->
+<!-- CONFIGURATEUR DE DÉCOUPE -->
 <section class="section section--light" id="configurateur">
   <div class="container">
     <div class="section-header section-header--center fade-in-up">
@@ -185,19 +168,15 @@
         <div class="config-steps" role="list">
           <div class="config-step active" data-step="1" role="listitem">
             <div class="config-step__num">1</div>
-            <div class="config-step__label">Panneau</div>
+            <div class="config-step__label">Matériaux</div>
           </div>
           <div class="config-step" data-step="2" role="listitem">
             <div class="config-step__num">2</div>
-            <div class="config-step__label">Morceaux</div>
+            <div class="config-step__label">Coordonnées</div>
           </div>
           <div class="config-step" data-step="3" role="listitem">
             <div class="config-step__num">3</div>
-            <div class="config-step__label">Infos</div>
-          </div>
-          <div class="config-step" data-step="4" role="listitem">
-            <div class="config-step__num">4</div>
-            <div class="config-step__label">Valider</div>
+            <div class="config-step__label">Résumé</div>
           </div>
         </div>
       </div>
@@ -205,88 +184,23 @@
       <!-- Step bodies -->
       <div class="config-body">
 
-        <!-- ==== STEP 1 : PANNEAU ==== -->
-        <div class="config-panel active" data-panel="1" role="tabpanel" aria-label="Étape 1 : Choisir le type de panneau">
-          <h3>Étape 1 — Choisissez votre type de panneau</h3>
-          <p style="color:var(--color-gray); font-size:.9rem; margin-bottom:1.5rem;">Cliquez sur le matériau qui correspond à votre projet.</p>
+        <!-- STEP 1 : MATÉRIAUX & PIÈCES -->
+        <div class="config-panel active" data-panel="1" role="tabpanel" aria-label="Étape 1 : Matériaux et dimensions">
+          <h3>Étape 1 — Matériaux &amp; Dimensions</h3>
+          <p style="color:var(--color-gray); font-size:.9rem; margin-bottom:1.5rem;">Ajoutez un ou plusieurs matériaux, puis saisissez les pièces pour chacun.</p>
 
-          <div class="panel-types">
-
-            <div class="panel-type" data-type="MDF 19mm" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">🪵</div>
-              <div class="panel-type__name">MDF 19mm</div>
-            </div>
-
-            <div class="panel-type" data-type="MDF Hydro" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">💧</div>
-              <div class="panel-type__name">MDF Hydro</div>
-            </div>
-
-            <div class="panel-type" data-type="Mélaminé Blanc" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">⬜</div>
-              <div class="panel-type__name">Mélaminé Blanc</div>
-            </div>
-
-            <div class="panel-type" data-type="Mélaminé Décor" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">🎨</div>
-              <div class="panel-type__name">Mélaminé Décor</div>
-            </div>
-
-            <div class="panel-type" data-type="Egger" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">⭐</div>
-              <div class="panel-type__name">Egger</div>
-            </div>
-
-            <div class="panel-type" data-type="Contreplaqué" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">📋</div>
-              <div class="panel-type__name">Contreplaqué</div>
-            </div>
-
-            <div class="panel-type" data-type="OSB" tabindex="0" role="radio" aria-checked="false">
-              <div class="panel-type__icon">🏗️</div>
-              <div class="panel-type__name">OSB</div>
-            </div>
-
+          <div id="blocs-container">
+            <!-- Blocs rendered by JS -->
           </div>
+
+          <button type="button" id="btn-add-materiau" class="btn btn-outline-gold btn-sm btn-add-materiau">
+            + Ajouter un matériau
+          </button>
         </div>
 
-        <!-- ==== STEP 2 : MORCEAUX ==== -->
-        <div class="config-panel" data-panel="2" role="tabpanel" aria-label="Étape 2 : Saisir les dimensions">
-          <h3>Étape 2 — Dimensions des morceaux</h3>
-          <p style="color:var(--color-gray); font-size:.9rem; margin-bottom:1.5rem;">Saisissez les dimensions en millimètres pour chaque morceau à découper. Vous pouvez en ajouter autant que nécessaire.</p>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="p-longueur">Longueur (mm)</label>
-              <input type="number" id="p-longueur" class="form-input" placeholder="ex: 600" min="1" max="3000">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="p-largeur">Largeur (mm)</label>
-              <input type="number" id="p-largeur" class="form-input" placeholder="ex: 400" min="1" max="2100">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="p-qte">Quantité</label>
-              <div style="display:flex; gap:.5rem; align-items:stretch;">
-                <input type="number" id="p-qte" class="form-input" value="1" min="1" max="999" style="flex:1;">
-                <button type="button" id="btn-add-piece" class="btn btn-primary btn-sm" style="border-radius:var(--radius-sm); white-space:nowrap;">
-                  + Ajouter
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div id="pieces-list" class="pieces-list" aria-live="polite" aria-label="Liste des morceaux ajoutés">
-            <!-- Pieces rendered by JS -->
-          </div>
-
-          <p id="pieces-empty-msg" style="color:var(--color-gray); font-size:.85rem; margin-top:.75rem; font-style:italic;">
-            Aucun morceau ajouté. Saisissez les dimensions ci-dessus et cliquez sur "Ajouter".
-          </p>
-        </div>
-
-        <!-- ==== STEP 3 : INFOS ==== -->
-        <div class="config-panel" data-panel="3" role="tabpanel" aria-label="Étape 3 : Vos coordonnées">
-          <h3>Étape 3 — Vos coordonnées</h3>
+        <!-- STEP 2 : COORDONNÉES -->
+        <div class="config-panel" data-panel="2" role="tabpanel" aria-label="Étape 2 : Vos coordonnées">
+          <h3>Étape 2 — Vos coordonnées</h3>
           <p style="color:var(--color-gray); font-size:.9rem; margin-bottom:1.5rem;">Nous avons besoin de vos informations pour vous envoyer le devis personnalisé.</p>
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
@@ -318,21 +232,17 @@
           </div>
         </div>
 
-        <!-- ==== STEP 4 : VALIDER ==== -->
-        <div class="config-panel" data-panel="4" role="tabpanel" aria-label="Étape 4 : Résumé et validation">
-          <h3>Étape 4 — Récapitulatif de votre demande</h3>
+        <!-- STEP 3 : RÉSUMÉ -->
+        <div class="config-panel" data-panel="3" role="tabpanel" aria-label="Étape 3 : Résumé et validation">
+          <h3>Étape 3 — Récapitulatif de votre demande</h3>
           <p style="color:var(--color-gray); font-size:.9rem; margin-bottom:1.5rem;">Vérifiez les informations ci-dessous avant d'envoyer votre demande de devis.</p>
 
           <div class="config-summary">
             <h4>Votre Devis Personnalisé</h4>
 
             <div class="summary-row">
-              <span>Type de panneau</span>
-              <strong id="summary-panel">—</strong>
-            </div>
-            <div class="summary-row">
-              <span>Morceaux demandés</span>
-              <strong id="summary-pieces" style="max-width:60%; text-align:right;">—</strong>
+              <span>Matériaux &amp; pièces</span>
+              <strong id="summary-blocs" style="max-width:60%; text-align:right;">—</strong>
             </div>
             <div class="summary-row">
               <span>Contact</span>
@@ -384,9 +294,80 @@
   </div>
 </section>
 
-<!-- ============================================================
-     FOOTER
-     ============================================================ -->
+<!-- CONTACT CARDS & MAP -->
+<section class="section" id="infos">
+  <div class="container">
+
+    <div class="contact-cards">
+
+      <div class="contact-card fade-in-up">
+        <div class="contact-card__icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="contact-card__title">Adresse</div>
+        <div class="contact-card__value">
+          96 Avenue Félix Faure<br>
+          94350 Villiers-sur-Marne
+        </div>
+      </div>
+
+      <div class="contact-card fade-in-up">
+        <div class="contact-card__icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 7.81 19.79 19.79 0 01.1 3.18 2 2 0 012.08 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.05a16 16 0 006.04 6.04l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+          </svg>
+        </div>
+        <div class="contact-card__title">Téléphone</div>
+        <div class="contact-card__value">
+          <a href="tel:+33168093580">01 68 09 35 80</a>
+        </div>
+      </div>
+
+      <div class="contact-card fade-in-up">
+        <div class="contact-card__icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div class="contact-card__title">Email</div>
+        <div class="contact-card__value">
+          <a href="mailto:contact@sipano.fr">contact@sipano.fr</a>
+        </div>
+      </div>
+
+      <div class="contact-card fade-in-up">
+        <div class="contact-card__icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A531" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="contact-card__title">Horaires</div>
+        <div class="contact-card__value">
+          Lun–Ven : 08:00–18:00<br>
+          Sam : 08:00–12:00
+        </div>
+      </div>
+
+    </div><!-- /.contact-cards -->
+
+    <div class="map-wrap fade-in-up" aria-label="Plan d'accès SIPANO">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2629.9!2d2.5476!3d48.8232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e60d3c5e3a0f0b%3A0x4a2e8c0e0c0e0c0e!2s96+Avenue+F%C3%A9lix+Faure%2C+94350+Villiers-sur-Marne!5e0!3m2!1sfr!2sfr!4v1700000000000"
+        title="SIPANO — 96 Avenue Félix Faure, 94350 Villiers-sur-Marne"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer class="site-footer" role="contentinfo">
   <div class="container">
     <div class="footer-grid">
@@ -436,7 +417,6 @@
   </div>
 </footer>
 
-<!-- EmailJS SDK — requis pour l'envoi du devis par email -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="js/devis-export.js"></script>
 <script src="js/main.js"></script>
