@@ -407,6 +407,19 @@ input, select, textarea { font-family: inherit; }
 
 .product-card__image svg { position: relative; z-index: 1; }
 
+.product-card__image--photo {
+  background: var(--color-gray-light);
+  padding: 0;
+}
+.product-card__image--photo::before { display: none; }
+.product-card__image--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+
 .product-card__badge {
   position: absolute;
   top: .75rem; right: .75rem;
