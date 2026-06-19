@@ -45,6 +45,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
@@ -94,9 +95,11 @@ input, select, textarea { font-family: inherit; }
    Container
    ============================================================ */
 .container {
+  width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
   padding: 0 var(--container-pad);
+  overflow: hidden;
 }
 
 /* ============================================================
@@ -607,7 +610,7 @@ input, select, textarea { font-family: inherit; }
 }
 .footer-col a:hover { color: var(--color-gold); }
 
-.social-icons { display: flex; gap: .65rem; flex-wrap: wrap; }
+.social-icons { display: flex; justify-content: flex-start; gap: 1rem; flex-wrap: wrap; }
 
 .social-icon {
   width: 38px; height: 38px;
@@ -730,6 +733,10 @@ input, select, textarea { font-family: inherit; }
 }
 
 .scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -1126,8 +1133,11 @@ input, select, textarea { font-family: inherit; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .testimonials-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .form-row { grid-template-columns: 1fr 1fr; }
+  .form-row { flex-direction: column; display: flex; }
   .config-body { padding: 1.75rem 1.25rem; }
+  .config-nav .btn { width: 100%; justify-content: center; }
+  .config-nav { flex-wrap: wrap; gap: .75rem; }
+  .bloc-materiau { padding: 1rem; }
 }
 
 @media (max-width: 480px) {

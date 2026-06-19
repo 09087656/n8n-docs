@@ -5,49 +5,42 @@
 
 'use strict';
 
-/**
- * Normalise le nom du matériau en identifiant sans accent ni espace.
- * Adapter cette fonction lorsque le format exact d'OptiCoupe sera connu.
- *
- * Exemple : "MDF 19mm" → "MDF_19mm"
- *
- * @param {string} panelType - Valeur brute issue du configurateur
- * @returns {string}
- */
 function normaliseMateriau(panelType) {
   return panelType
-    .replace(/\s+/g, '_')          // espaces → underscores
+    .replace(/\s+/g, '_')
     .replace(/[éèê]/g, 'e')
     .replace(/[àâ]/g, 'a')
     .replace(/[îï]/g, 'i')
     .replace(/[ôö]/g, 'o')
     .replace(/[ûü]/g, 'u')
-    .replace(/[^A-Za-z0-9_\-]/g, ''); // retire tout caractère spécial restant
+    .replace(/[^A-Za-z0-9_\-]/g, '');
 }
 
 /**
- * Génère le contenu CSV à partir de l'état du configurateur.
+ * Génère le contenu CSV multi-blocs.
+ * Header : materiau,longueur_mm,largeur_mm,quantite,chant_gauche,chant_droite,chant_haut,chant_bas
  *
- * Format attendu (une ligne par morceau) :
- *   materiau,longueur_mm,largeur_mm,quantite
- *
- * TODO: ajuster les noms de colonnes et l'ordre des champs
- *       lorsque le format exact d'OptiCoupe sera communiqué.
- *
- * @param {{ panelType: string, pieces: Array<{longueur: string, largeur: string, qte: string}>, contact: object }} state
- * @returns {string} Contenu CSV (UTF-8, séparateur virgule)
+ * @param {{ blocs: Array<{materiau: string, pieces: Array}>, contact: object }} state
+ * @returns {string}
  */
 function generateCsv(state) {
-  var rows = ['materiau,longueur_mm,largeur_mm,quantite'];
-  var materiau = normaliseMateriau(state.panelType || 'inconnu');
+  var rows = ['materiau,longueur_mm,largeur_mm,quantite,chant_gauche,chant_droite,chant_haut,chant_bas'];
 
-  state.pieces.forEach(function (piece) {
-    rows.push([
-      materiau,
-      parseInt(piece.longueur, 10),
-      parseInt(piece.largeur, 10),
-      parseInt(piece.qte, 10)
-    ].join(','));
+  state.blocs.forEach(function (bloc) {
+    var materiau = normaliseMateriau(bloc.materiau || 'inconnu');
+    bloc.pieces.forEach(function (piece) {
+      var chants = piece.chants || { gauche: false, droite: false, haut: false, bas: false };
+      rows.push([
+        materiau,
+        parseInt(piece.longueur, 10),
+        parseInt(piece.largeur, 10),
+        parseInt(piece.quantite, 10),
+        chants.gauche ? 1 : 0,
+        chants.droite ? 1 : 0,
+        chants.haut ? 1 : 0,
+        chants.bas ? 1 : 0
+      ].join(','));
+    });
   });
 
   return rows.join('\r\n');
@@ -55,12 +48,8 @@ function generateCsv(state) {
 
 /**
  * Déclenche le téléchargement du fichier CSV dans le navigateur.
- *
- * @param {string} csvString  - Contenu CSV renvoyé par generateCsv()
- * @param {string} [filename] - Nom du fichier téléchargé (optionnel)
  */
 function downloadCsv(csvString, filename) {
-  // Préfixe BOM UTF-8 pour Excel (Windows)
   var bom = '﻿';
   var blob = new Blob([bom + csvString], { type: 'text/csv;charset=utf-8;' });
   var url = URL.createObjectURL(blob);
@@ -71,37 +60,16 @@ function downloadCsv(csvString, filename) {
   document.body.appendChild(link);
   link.click();
 
-  // Nettoyage immédiat
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
-
-/* ============================================================
-   Configuration EmailJS
-   ——————————————————————————————————————————————————————————————
-   1. Créez un compte gratuit sur https://www.emailjs.com
-   2. Ajoutez un "Email Service" (Gmail, Outlook, ou SMTP custom)
-      → notez votre SERVICE_ID
-   3. Créez un "Email Template" avec les variables ci-dessous
-      (voir README dans les commentaires de sendDevisByEmail)
-      → notez votre TEMPLATE_ID
-   4. Copiez votre "Public Key" depuis Account → API Keys
-      → notez votre PUBLIC_KEY
-   5. Remplacez les trois valeurs EMAILJS_* ci-dessous
-   ============================================================ */
 
 var EMAILJS_SERVICE_ID  = 'service_jkj355v';
 var EMAILJS_TEMPLATE_ID = 'template_yxrdrtt';
 var EMAILJS_PUBLIC_KEY  = 'PIX_-B8-F5N7tip3N';
 
-/** Adresse qui recevra tous les devis (modifiable ici) */
 var DESTINATAIRE = 'romanfilipciuc2006@mail.ru';
 
-/**
- * Encode une chaîne UTF-8 en base64 (pour la pièce jointe EmailJS).
- * @param {string} str
- * @returns {string}
- */
 function toBase64(str) {
   try {
     return btoa(unescape(encodeURIComponent(str)));
@@ -111,58 +79,53 @@ function toBase64(str) {
 }
 
 /**
+ * Construit un résumé texte des blocs groupés par matériau.
+ * @param {Array} blocs
+ * @returns {string}
+ */
+function buildBlocsResume(blocs) {
+  return blocs.map(function (bloc) {
+    var mat = bloc.materiau || '(inconnu)';
+    var lignes = bloc.pieces.map(function (p) {
+      var chants = [];
+      var c = p.chants || {};
+      if (c.gauche) chants.push('Gauche');
+      if (c.droite) chants.push('Droite');
+      if (c.haut) chants.push('Haut');
+      if (c.bas) chants.push('Bas');
+      return '  ' + p.longueur + 'x' + p.largeur + 'mm x' + p.quantite +
+        (chants.length ? ' [Chants: ' + chants.join(', ') + ']' : '');
+    }).join('\n');
+    return '--- ' + mat + ' ---\n' + (lignes || '  (aucune pièce)');
+  }).join('\n\n');
+}
+
+/**
  * Envoie le CSV par email via EmailJS.
- *
- * ——— Template EmailJS à créer ———
- * Sujet    : Nouveau devis SIPANO — {{client_nom}}
- * Corps    :
- *   Bonjour,
- *
- *   Nouvelle demande de découpe reçue le {{date}}.
- *
- *   Client   : {{client_nom}}
- *   Entreprise: {{client_entreprise}}
- *   Téléphone: {{client_telephone}}
- *   Email    : {{client_email}}
- *   Adresse  : {{client_adresse}}
- *
- *   Message  : {{client_message}}
- *
- *   ——— Détail de la découpe ———
- *   Matériau : {{materiau}}
- *   {{csv_contenu}}
- *
- *   Le fichier CSV est joint à cet email.
- *
- * Pièce jointe (onglet "Attachments" dans EmailJS) :
- *   Name    : devis-sipano-{{client_nom}}.csv
- *   Data    : {{csv_base64}}
- *   Mime    : text/csv
- * ———————————————————————————————
- *
- * @param {string} csvString  - Contenu CSV généré par generateCsv()
+ * @param {string} csvString
  * @param {{ nom, entreprise, telephone, email, adresse, message }} contactInfo
- * @param {string} materiau   - Type de panneau sélectionné
+ * @param {Array} blocs
  * @returns {Promise<void>}
  */
-function sendDevisByEmail(csvString, contactInfo, materiau) {
+function sendDevisByEmail(csvString, contactInfo, blocs) {
   if (
     EMAILJS_SERVICE_ID  === 'VOTRE_SERVICE_ID' ||
     EMAILJS_TEMPLATE_ID === 'VOTRE_TEMPLATE_ID' ||
     EMAILJS_PUBLIC_KEY  === 'VOTRE_PUBLIC_KEY'
   ) {
-    console.warn('[SIPANO] EmailJS non configuré. Renseignez les constantes dans devis-export.js.');
+    console.warn('[SIPANO] EmailJS non configuré.');
     return Promise.resolve();
   }
 
   if (typeof emailjs === 'undefined') {
-    console.error('[SIPANO] SDK EmailJS introuvable. Vérifiez la balise <script> dans contact.html.');
+    console.error('[SIPANO] SDK EmailJS introuvable.');
     return Promise.resolve();
   }
 
   var now = new Date();
   var dateStr = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   var slug = (contactInfo.nom || 'client').replace(/\s+/g, '-').toLowerCase();
+  var materiauLabel = (blocs || []).map(function (b) { return b.materiau; }).filter(Boolean).join(', ') || '—';
 
   var templateParams = {
     to_email:           DESTINATAIRE,
@@ -173,8 +136,8 @@ function sendDevisByEmail(csvString, contactInfo, materiau) {
     client_email:       contactInfo.email      || '—',
     client_adresse:     contactInfo.adresse    || '—',
     client_message:     contactInfo.message    || '—',
-    materiau:           materiau               || '—',
-    csv_contenu:        csvString,
+    materiau:           materiauLabel,
+    csv_contenu:        buildBlocsResume(blocs || []),
     csv_base64:         toBase64('﻿' + csvString),
     csv_filename:       'devis-sipano-' + slug + '-' + now.toISOString().slice(0, 10) + '.csv'
   };
@@ -190,14 +153,12 @@ function sendDevisByEmail(csvString, contactInfo, materiau) {
 }
 
 /**
- * Alias rétrocompatible pour l'appel dans main.js.
- * Conserve la même signature que le stub original.
+ * Alias pour l'appel dans main.js.
  */
-function sendCsvToBackend(csvString, contactInfo) {
-  return sendDevisByEmail(csvString, contactInfo, contactInfo._materiau || '');
+function sendCsvToBackend(csvString, contactInfo, blocs) {
+  return sendDevisByEmail(csvString, contactInfo, blocs);
 }
 
-/* Export vers l'espace global (pas de module bundler) */
 window.DevisExport = {
   generateCsv: generateCsv,
   downloadCsv: downloadCsv,
