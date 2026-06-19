@@ -90,9 +90,9 @@ function downloadCsv(csvString, filename) {
    5. Remplacez les trois valeurs EMAILJS_* ci-dessous
    ============================================================ */
 
-var EMAILJS_SERVICE_ID  = 'VOTRE_SERVICE_ID';   // ex: 'service_abc123'
-var EMAILJS_TEMPLATE_ID = 'VOTRE_TEMPLATE_ID';  // ex: 'template_xyz456'
-var EMAILJS_PUBLIC_KEY  = 'VOTRE_PUBLIC_KEY';   // ex: 'aBcDeFgHiJkL'
+var EMAILJS_SERVICE_ID  = 'service_jkj355v';
+var EMAILJS_TEMPLATE_ID = 'template_yxrdrtt';
+var EMAILJS_PUBLIC_KEY  = 'PIX_-B8-F5N7tip3N';
 
 /** Adresse qui recevra tous les devis (modifiable ici) */
 var DESTINATAIRE = 'romanfilipciuc2006@mail.ru';
@@ -179,16 +179,14 @@ function sendDevisByEmail(csvString, contactInfo, materiau) {
     csv_filename:       'devis-sipano-' + slug + '-' + now.toISOString().slice(0, 10) + '.csv'
   };
 
-  return emailjs
-    .init({ publicKey: EMAILJS_PUBLIC_KEY })
-    .then ? (
-      /* EmailJS v4+ : init() renvoie une promesse, puis send() */
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-    ) : (
-      /* EmailJS v3 : init() est synchrone */
-      (emailjs.init(EMAILJS_PUBLIC_KEY),
-       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams))
-    );
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+    .then(function () {
+      console.info('[SIPANO] Devis envoyé avec succès à ' + DESTINATAIRE);
+    })
+    .catch(function (err) {
+      console.error('[SIPANO] Échec envoi email :', err);
+    });
 }
 
 /**
