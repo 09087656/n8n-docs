@@ -248,6 +248,88 @@
 
     <div class="products-grid" id="products-grid">
 
+      <!-- ══════════════ PRODUITS RÉELS — EN AVANT ══════════════ -->
+
+      <!-- Coulisses invisibles tiroir Silver -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="coulisses-silver">
+        <div class="product-card__image">
+          <span class="product-card__badge">Nouveau</span>
+          <img src="images/produits/coulisses-tiroir-silver.jpg"
+               alt="Jeu de coulisses invisibles Silver à sortie totale" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#d0d0d0,#a0a0a0)'">
+        </div>
+        <div class="product-card__body">
+          <p class="product-card__category">Quincaillerie</p>
+          <h3 class="product-card__title">Coulisses invisibles Silver — sortie totale</h3>
+          <p class="product-card__desc">Jeu de coulisses à sortie totale avec fermeture amortie et loqueteau. Profondeur 290 mm. Acier zingué.</p>
+          <div class="product-card__footer">
+            <div class="product-card__price">Sur devis</div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('coulisses-silver')">Voir la fiche</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Embase charnière X91/X92 -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="embase-x91">
+        <div class="product-card__image">
+          <span class="product-card__badge">Nouveau</span>
+          <img src="images/produits/embase-charniere-x91.jpg"
+               alt="Embase pour charnière X91/X92 à visser" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#d0d0d0,#a0a0a0)'">
+        </div>
+        <div class="product-card__body">
+          <p class="product-card__category">Quincaillerie</p>
+          <h3 class="product-card__title">Embase charnière X91/X92 — Hauteur 0</h3>
+          <p class="product-card__desc">Embase de fixation à visser pour charnières X91 et X92. Hauteur 0. Acier nickelé.</p>
+          <div class="product-card__footer">
+            <div class="product-card__price">Sur devis</div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('embase-x91')">Voir la fiche</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Charnière droite X91R -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="charniere-x91r">
+        <div class="product-card__image">
+          <span class="product-card__badge">Nouveau</span>
+          <img src="images/produits/charniere-x91r.jpg"
+               alt="Charnière droite X91R à fermeture amortie" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#d0d0d0,#a0a0a0)'">
+        </div>
+        <div class="product-card__body">
+          <p class="product-card__category">Quincaillerie</p>
+          <h3 class="product-card__title">Charnière droite X91R — fermeture amortie</h3>
+          <p class="product-card__desc">Charnière droite à fermeture amortie à haute régulation. Acier nickelé. Montage et réglage précis.</p>
+          <div class="product-card__footer">
+            <div class="product-card__price">Sur devis</div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('charniere-x91r')">Voir la fiche</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Vérin de meubles circulaire -->
+      <article class="product-card fade-in-up" data-category="quincaillerie"
+               data-modal="verin-meuble">
+        <div class="product-card__image">
+          <span class="product-card__badge">Nouveau</span>
+          <img src="images/produits/verin-meuble-circulaire.jpg"
+               alt="Vérin de meubles circulaire Ø48mm" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,#555,#222)'">
+        </div>
+        <div class="product-card__body">
+          <p class="product-card__category">Quincaillerie</p>
+          <h3 class="product-card__title">Vérin de meubles circulaire Ø48 mm</h3>
+          <p class="product-card__desc">Vérin réglable pour meuble. Diamètre 48 mm, hauteur 17 mm. Corps acier et plastique noir.</p>
+          <div class="product-card__footer">
+            <div class="product-card__price">Sur devis</div>
+            <button class="btn btn-gold btn-sm" onclick="openModal('verin-meuble')">Voir la fiche</button>
+          </div>
+        </div>
+      </article>
+
       <!-- ══════════════ BOIS & PANNEAUX ══════════════ -->
 
       <!-- MDF 19mm -->
@@ -602,6 +684,77 @@
 <script>
 /* ── DONNÉES FICHES PRODUIT ──────────────────────────────── */
 const PRODUCTS = {
+
+  'coulisses-silver': {
+    cat: 'Quincaillerie', ref: 'REF : COUL-SIL-290',
+    title: 'Coulisses invisibles Silver — sortie totale 290 mm',
+    img: 'images/produits/coulisses-tiroir-silver.jpg',
+    imgAlt: 'Jeu de coulisses invisibles Silver à sortie totale avec loqueteau',
+    price: 'Sur devis', priceUnit: '', priceNote: 'Prix selon quantité. Contactez-nous.',
+    desc: 'Jeu de coulisses à sortie totale pour tiroir, modèle Silver. Fermeture amortie et loqueteau intégré pour un coulissement silencieux et précis. Finition acier zingué résistant à la corrosion.',
+    specs: [
+      ['Type', 'Coulisse invisible à sortie totale'],
+      ['Profondeur', '290 mm'],
+      ['Matière', 'Acier'],
+      ['Finition', 'Zingué'],
+      ['Fermeture', 'Amortie avec loqueteau'],
+      ['Usage', 'Tiroir de meuble — montage invisible'],
+    ],
+    formats: ['Profondeur 290 mm', 'Autres profondeurs sur demande'],
+  },
+
+  'embase-x91': {
+    cat: 'Quincaillerie', ref: 'REF : EMB-X91-H0',
+    title: 'Embase charnière X91/X92 — Hauteur 0',
+    img: 'images/produits/embase-charniere-x91.jpg',
+    imgAlt: 'Embase pour charnière X91/X92 à visser — Acier nickelé',
+    price: 'Sur devis', priceUnit: '', priceNote: 'Prix selon quantité. Contactez-nous.',
+    desc: 'Embase de fixation à visser compatible avec les charnières X91 et X92. Hauteur de recul 0 mm pour montage affleurant. Acier nickelé pour une résistance et une esthétique optimales.',
+    specs: [
+      ['Compatible', 'Charnières X91 / X92'],
+      ['Type de fixation', 'À visser'],
+      ['Hauteur de recul', '0 mm (affleurant)'],
+      ['Matière', 'Acier'],
+      ['Finition', 'Nickelé'],
+    ],
+    formats: ['Pièce unitaire', 'En lot sur demande'],
+  },
+
+  'charniere-x91r': {
+    cat: 'Quincaillerie', ref: 'REF : CHAR-X91R',
+    title: 'Charnière droite X91R — fermeture amortie haute régulation',
+    img: 'images/produits/charniere-x91r.jpg',
+    imgAlt: 'Charnière droite X91R à fermeture amortie et haute régulation — Acier nickelé',
+    price: 'Sur devis', priceUnit: '', priceNote: 'Prix selon quantité. Contactez-nous.',
+    desc: 'Charnière droite à fermeture amortie avec système de haute régulation 3D. Idéale pour portes de meubles nécessitant un positionnement précis. Fabrication acier nickelé pour une durabilité maximale.',
+    specs: [
+      ['Type', 'Charnière droite (encastrée)'],
+      ['Fermeture', 'Amortie — silence garanti'],
+      ['Régulation', 'Haute régulation 3D (haut/bas, gauche/droite, avant/arrière)'],
+      ['Matière', 'Acier'],
+      ['Finition', 'Nickelé'],
+      ['Angle d\'ouverture', '110°'],
+    ],
+    formats: ['Pièce unitaire', 'En lot sur demande'],
+  },
+
+  'verin-meuble': {
+    cat: 'Quincaillerie', ref: 'REF : VER-CIR-48',
+    title: 'Vérin de meubles circulaire Ø48 mm',
+    img: 'images/produits/verin-meuble-circulaire.jpg',
+    imgAlt: 'Vérin de meubles circulaire Ø48mm — Acier et Plastique noir',
+    price: 'Sur devis', priceUnit: '', priceNote: 'Prix selon quantité. Contactez-nous.',
+    desc: 'Vérin réglable pour meuble, à corps circulaire. Permet le nivellement précis de meubles sur sol irrégulier. Base en plastique noir robuste, tige filetée en acier. Compatible avec la plupart des meubles de cuisine, salle de bain et rangement.',
+    specs: [
+      ['Diamètre', '48 mm'],
+      ['Hauteur', '17 mm'],
+      ['Matière corps', 'Plastique — Noir'],
+      ['Matière tige', 'Acier'],
+      ['Réglage', 'Tige filetée — hauteur ajustable'],
+      ['Usage', 'Pied de meuble niveleur'],
+    ],
+    formats: ['Pièce unitaire', 'En lot sur demande'],
+  },
 
   'mdf-19': {
     cat: 'Bois & Panneaux', ref: 'REF : MDF-19-STD',
